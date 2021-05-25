@@ -15,13 +15,17 @@ class Blockchain:
 
     def __init__(self):
         self.chain = []
+        self.transations = []
         self.create_block(proof=1, previous_hash='0')
 
     def create_block(self, proof, previous_hash):
         block = {'index': len(self.chain) + 1,
                  'timestamp': str(datetime.datetime.now()),
                  'proof': proof,
-                 'previous_hash': previous_hash}
+                 'previous_hash': previous_hash,
+                 'transactions': self.transations
+                 }
+        self.transations = []
         self.chain.append(block)
         return block
 
@@ -65,6 +69,17 @@ class Blockchain:
             block_index += 1
 
         return True
+
+    def add_transaction(self, sender, receiver, amount):
+        transaction = {
+            'sender': sender,
+            'receiver': receiver,
+            'amount': amount
+        }
+        self.transations.append(transaction)
+
+        previous_block = self.get_previous_block()
+        return previous_block['index'] + 1
 
 # Mining Blockchain
 

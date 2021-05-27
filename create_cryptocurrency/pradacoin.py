@@ -150,9 +150,7 @@ def get_chain():
                 'length': len(blockchain.chain)}
     return jsonify(response), 200
 
-
-# 5) Running app
-app.run(host='0.0.0.0', port=5000)
+# Checking tif Blockchain is valid
 
 
 @app.route('/is_valid', methods=['GET'])
@@ -164,3 +162,23 @@ def is_valid():
     else:
         response = {'message': 'Error: Chain is not valid!'}
     return jsonify(response), 200
+
+# Adding a new transaction to the Blockchain
+
+
+@app.route('/add_transaction', methods=['POST'])
+def add_transaction():
+    json = request.get_json()
+    transaction_keys = ['sender', 'receiver', 'amount']
+    if not all(key in json for key in transaction_keys):
+        return 'Some elements of the transaction are missing', 400
+    index = blockchain.add_transaction(
+        json['sender'], json['receiver'], json['amount'])
+
+    response = {'message': f'This transaction will be added to Block {index}'}
+
+    return jsonify(response), 200
+
+
+# 5) Running app
+app.run(host='0.0.0.0', port=5000)

@@ -177,7 +177,7 @@ def add_transaction():
 
     response = {'message': f'This transaction will be added to Block {index}'}
 
-    return jsonify(response), 200
+    return jsonify(response), 201
 
 
 # 5) Running app

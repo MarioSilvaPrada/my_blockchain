@@ -96,7 +96,7 @@ class Blockchain:
             if response.status_code == 200:
                 length = response.json()['length']
                 chain = response.json()['chain']
-                
+
                 if length > max_length and self.chain_is_valid(chain):
                     max_length = length
                     longest_chain = chain
@@ -113,6 +113,9 @@ class Blockchain:
 # 1) Create WebApp
 app = Flask(__name__)
 
+# 1.1) Creating an address for the node on Port 5000
+node_address = str(uuid4()).replace('-', '')
+
 # 2) Create Blockchain
 blockchain = Blockchain()
 
@@ -125,6 +128,8 @@ def mine_block():
     previous_proof = previous_block['proof']
     proof = blockchain.proof_of_work(previous_proof)
     previous_hash = blockchain.hash(previous_block)
+    blockchain.add_transaction(
+        sender=node_address, receiver='Mário', amount=10)
     block = blockchain.create_block(proof, previous_hash)
     response = {
         'message': 'Congrats! You just mined a block!',
@@ -132,6 +137,7 @@ def mine_block():
         'timestamp': block['timestamp'],
         'proof': block['proof'],
         'previous_hash': block['previous_hash'],
+        'transactions': block['transactions'],
     }
     return jsonify(response), 200
 

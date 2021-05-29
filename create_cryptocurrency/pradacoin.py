@@ -179,6 +179,42 @@ def add_transaction():
 
     return jsonify(response), 201
 
+# Descentralize our Blockchain
+
+# - Connection new nodes
+
+
+@app.route('/connect_node', methods=['POST'])
+def connect_node():
+    json = request.get_json()
+    nodes = json.get('nodes')
+
+    if nodes is None:
+        return "No nodes!", 400
+
+    for node in nodes:
+        blockchain.add_node(node)
+
+    response = {
+        'message': 'All the nodes are now connected. The Pradacoin Blockchain now contains the following nodes:',
+        'total_nodes': list(blockchain.nodes)
+    }
+
+    return jsonify(response), 201
+
+# - Replacing the chain by the longest chain if needed
+
+
+@app.route('/replace_chain', methods=['GET'])
+def replace_chain():
+    is_chain_replaced = blockchain.replace_chain()
+    
+    if is_chain_replaced:
+        response = {'message': 'Chain is valid'}
+    else:
+        response = {'message': 'Error: Chain is not valid!'}
+    return jsonify(response), 200
+
 
 # 5) Running app
 app.run(host='0.0.0.0', port=5000)
